@@ -57,13 +57,13 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);fon
 
 /* WEEK */
 .week-grid{display:grid;grid-template-columns:minmax(80px,max-content) repeat(7,1fr);border-radius:8px;overflow:hidden;border:1px solid var(--border);}
-.week-header-cell{background:var(--surface2);padding:5px 2px;text-align:center;font-size:15px;font-weight:700;color:#ffffff;text-transform:uppercase;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;}
+.week-header-cell{background:var(--surface2);padding:3px 2px;text-align:center;font-size:13px;font-weight:700;color:#ffffff;text-transform:uppercase;border-right:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;}
 .week-header-cell.today-hdr{background:var(--surface2);color:var(--text);}
-.day-num{display:block;font-size:14px;font-weight:600;color:#ffffff;margin-top:1px;}
+.day-num{display:block;font-size:13px;font-weight:600;color:#ffffff;margin-top:0;}
 .today-hdr .day-num{font-weight:600;}
-.name-cell{background:var(--surface);padding:5px 10px;font-size:16px;font-weight:700;color:#ffffff;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;white-space:nowrap;}
-.shift-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:42px;display:flex;align-items:center;justify-content:center;background:var(--surface);position:relative;}
-.shift-badge{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:14px;font-family:'DM Mono',monospace;}
+.name-cell{background:var(--surface);padding:3px 8px;font-size:14px;font-weight:700;color:#ffffff;border-right:1px solid var(--border);border-bottom:1px solid var(--border);display:flex;align-items:center;white-space:nowrap;}
+.shift-cell{border-right:1px solid var(--border);border-bottom:1px solid var(--border);height:30px;display:flex;align-items:center;justify-content:center;background:var(--surface);position:relative;}
+.shift-badge{display:flex;align-items:center;justify-content:center;width:100%;height:100%;font-size:12px;font-family:'DM Mono',monospace;}
 .today-overlay{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:10;border-left:3px solid #fff;border-right:3px solid #fff;}
 .today-overlay-top{border-top:3px solid #fff;}
 .today-overlay-last{border-bottom:3px solid #fff;}
