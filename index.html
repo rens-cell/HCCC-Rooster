@@ -358,7 +358,7 @@ function renderTeam(){
   employees.forEach(name=>{const shift=(ROSTER[name]||{})[dstr];if(!shift) return;const k=shift.trim().toLowerCase().replace(/\.$/,'');(groups[k]||groups.other).push({name,shift});});
   const labels={o:'Ochtend (05:45–14:15)',mx:'MX (10:30–19:00)',m:'Middag (13:45–22:15)',n:'Nacht (21:45–06:15)',other:'Overig',x:'Dagdienst (08:00–16:30)',v:'Vrij',z:'Ziek'};
   let h='',any=false;
-  ['o','mx','m','n','other','x','v','z'].forEach(k=>{
+  ['o','mx','m','n','x','other','v','z'].forEach(k=>{
     const ppl=groups[k];if(!ppl.length) return;any=true;
     h+=`<div class="team-section-label">${labels[k]}</div><div class="team-grid">`;
     ppl.forEach(({name,shift})=>{
