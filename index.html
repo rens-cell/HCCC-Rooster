@@ -276,7 +276,7 @@ function render(){if(currentView==='week') renderWeek();else if(currentView==='p
 function renderWeek(){
   const mon=monday(currentDate),days=Array.from({length:7},(_,i)=>addDays(mon,i));
   const t=todayStr(),vis=visible(true);
-  document.getElementById('periodLabel').innerHTML=`<span style='color:#fff;font-size:11px;font-weight:500'>week ${weekNum(mon)}</span> <span style='color:var(--border)'>|</span> ${days[0].getDate()} – ${days[6].getDate()} ${MONTHS_NL[days[6].getMonth()]}`;
+  document.getElementById('periodLabel').innerHTML=`<span style='color:#fff;font-size:16px;font-weight:700'>week ${weekNum(mon)}</span> <span style='color:var(--border)'>|</span> ${days[0].getDate()} – ${days[6].getDate()} ${MONTHS_NL[days[6].getMonth()]}`;
   let h='<div class="week-grid">';
   h+='<div class="week-header-cell" style="text-align:left;padding-left:6px"></div>';
   days.forEach(d=>{
@@ -353,7 +353,7 @@ function renderPersonal(){
 /* ===== TEAM ===== */
 function renderTeam(){
   const d=currentDate,dstr=ds(d);
-  document.getElementById('periodLabel').innerHTML=`<span style='color:#fff;font-size:11px;font-weight:500'>week ${weekNum(d)}</span> <span style='color:var(--border)'>|</span> ${DAYS_NL[d.getDay()]} ${d.getDate()} ${MONTHS_NL[d.getMonth()]}`;
+  document.getElementById('periodLabel').innerHTML=`<span style='color:#fff;font-size:16px;font-weight:700'>week ${weekNum(d)}</span> <span style='color:var(--border)'>|</span> ${DAYS_NL[d.getDay()]} ${d.getDate()} ${MONTHS_NL[d.getMonth()]}`;
   const groups={o:[],mx:[],m:[],n:[],other:[],x:[],v:[],z:[]};
   employees.forEach(name=>{const shift=(ROSTER[name]||{})[dstr];if(!shift) return;const k=shift.trim().toLowerCase().replace(/\.$/,'');(groups[k]||groups.other).push({name,shift});});
   const labels={o:'Ochtend (05:45–14:15)',mx:'MX (10:30–19:00)',m:'Middag (13:45–22:15)',n:'Nacht (21:45–06:15)',other:'Overig',x:'Dagdienst (08:00–16:30)',v:'Vrij',z:'Ziek'};
