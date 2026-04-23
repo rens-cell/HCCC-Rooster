@@ -19,11 +19,13 @@
   --bg:#d8dce8;--surface:#e4e7f0;--surface2:#cdd1df;--border:#b0b6c8;
   --text:#0d2254;--muted:#52586a;--accent:#2563eb;--today:#bfc8e0;
   --row-even:#e4e7f0;--row-odd:#d8dce8;
+  --section-label:#1a2a4a;
 }
 body.dark {
   --bg:#0d0f14;--surface:#161a22;--surface2:#1e2330;--border:#2a3040;
   --text:#e8eaf0;--muted:#7a8294;--accent:#4f9cf9;--today:#1a2d4a;
   --row-even:#161a22;--row-odd:#1e2330;
+  --section-label:#a0aabf;
 }
 body.dark #modalDate {color:#e8eaf0 !important;font-size:20px !important;font-weight:600 !important;}
 body.dark .upcoming-date {color:#e8eaf0 !important;}
@@ -71,12 +73,12 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 
 /* NAV */
 .tabs{background:#0d2254;border-bottom:none;display:flex;align-items:center;padding:8px 10px;padding-top:calc(8px + env(safe-area-inset-top));gap:8px;position:sticky;top:0;z-index:100;max-width:430px;}
-.tab{flex:1;padding:7px 4px!important;border:none;background:#FFC000;color:#0d2254;font-size:16px;font-weight:700;cursor:pointer;border-radius:0;font-family:inherit;text-align:center;display:flex;align-items:center;justify-content:center;}
+.tab{flex:1;padding:7px 4px!important;border:none;background:#FFC000;color:#0d2254;font-size:16px;font-weight:400;cursor:pointer;border-radius:0;font-family:'Roboto',sans-serif;text-align:center;display:flex;align-items:center;justify-content:center;}
 .tab.active{color:#FFC000;background:#0d2254;border:none;font-weight:700;}
 #todayBtn{background:none;border:1px solid var(--border);color:var(--text);padding:5px 9px;border-radius:8px;font-size:16px;cursor:pointer;line-height:1;flex-shrink:0;}
 
 /* CONTROLS */
-.controls{padding:0;display:flex;align-items:stretch;gap:0;background:#0d2254;border-bottom:2px solid #FFC000;min-height:80px;position:sticky;z-index:99;}
+.controls{padding:0;display:flex;align-items:stretch;gap:0;background:#0d2254;border-bottom:2px solid #FFC000;min-height:80px;position:sticky;top:44px;z-index:99;}
 .nav-group{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .nav-btn{background:#FFC000;border:none;color:#0d2254;border-radius:0;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;aspect-ratio:1;padding:0;}
 .period-label{font-weight:700;font-size:16px;cursor:pointer;user-select:none;color:#fff;line-height:1.2;display:flex;flex-direction:column;justify-content:center;white-space:nowrap;}
@@ -123,7 +125,7 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 .ubadge{display:inline-block;border-radius:5px;padding:5px 12px;font-size:14px;font-weight:700;box-shadow:inset 0 0 0 1px rgba(0,0,0,0.25);}
 
 /* TEAM */
-.team-section-label{font-size:17px;font-weight:700;color:var(--text);margin-bottom:8px;margin-top:14px;padding:6px 0 4px;border-bottom:1px solid var(--border);}
+.team-section-label{font-size:18px;font-weight:400;font-family:'Roboto',sans-serif;color:var(--section-label);margin-bottom:10px;margin-top:18px;padding:4px 0 8px 10px;}
 .team-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;}
 .team-card{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 10px;min-width:140px;max-width:calc(50% - 6px);flex:1;cursor:pointer;min-height:48px;overflow:hidden;}
 .tc-badge{border-radius:6px;padding:6px 12px;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;}
@@ -149,15 +151,18 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 
 <div style="background:#000;height:env(safe-area-inset-top);position:fixed;top:0;left:0;right:0;z-index:999;"></div>
 <div id="app-shell" style="margin-top:env(safe-area-inset-top);">
-<div class="tabs" style="background:#0d2254;display:flex;align-items:center;padding:2px 0;gap:0;position:sticky;top:0;z-index:100;border-bottom:2px solid #FFC000;">
-  <button id="modeBtn" onclick="toggleMode()" style="background:#0d2254;border:none;padding:0 10px 0 20px;height:36px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;color:#ffffff;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 8.5A6.5 6.5 0 1 1 7.5 2a5 5 0 0 0 6.5 6.5z" fill="#ffffff"/></svg></button>
-  <button class="tab active" onclick="setView('team',this)" style="background:#0d2254;color:#ffffff;flex:1;height:36px;padding:0 4px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">Dag</button>
-  <button class="tab" onclick="setView('week',this)" style="background:#0d2254;color:#ffffff;flex:1;height:36px;padding:0 4px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">Week</button>
-  <button class="tab" onclick="setView('personal',this)" style="background:#0d2254;color:#ffffff;flex:1;height:36px;padding:0 4px;border:none;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;">Jaar</button>
-  <div id="navBtns" style="display:flex;flex-direction:row;align-items:center;gap:6px;margin-left:auto;padding:0 8px">
-    <button onclick="navigate(-1)" style="width:44px;height:44px;background:transparent;border:none;border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0 10px"><span style="width:0;height:0;border-style:solid;border-width:9px 14px 9px 0;border-color:transparent #ffffff transparent transparent;display:inline-block"></span></button>
-    <button id="todayBtn2" onclick="goToday()" title="Ga naar vandaag" style="width:44px;height:44px;background:transparent;border:none;border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0 10px"><span style="width:0;height:0;border-style:solid;border-width:0 10px 16px 10px;border-color:transparent transparent #ffffff transparent;display:inline-block"></span></button>
-    <button onclick="navigate(1)" style="width:44px;height:44px;background:transparent;border:none;border-radius:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;padding:0 10px"><span style="width:0;height:0;border-style:solid;border-width:9px 0 9px 14px;border-color:transparent transparent transparent #ffffff;display:inline-block"></span></button>
+<div class="tabs" style="background:#0d2254;display:flex;align-items:center;padding:4px 8px 4px 0;gap:0;position:sticky;top:0;z-index:100;border-bottom:2px solid #FFC000;">
+  <button id="modeBtn" onclick="toggleMode()" style="background:#0d2254;border:none;padding:0 10px 0 20px;height:40px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 8.5A6.5 6.5 0 1 1 7.5 2a5 5 0 0 0 6.5 6.5z" fill="#FFC000"/></svg></button>
+  <div id="tabTrack" style="flex:1;background:#07163a;border-radius:10px;display:flex;padding:4px;gap:2px;position:relative;">
+    <div id="tabPill" style="position:absolute;top:4px;left:4px;width:calc(33.33% - 5px);height:calc(100% - 8px);background:#0d2254;border-radius:7px;box-shadow:0 2px 8px rgba(0,0,0,0.5);transition:left 0.22s cubic-bezier(.4,0,.2,1),width 0.22s cubic-bezier(.4,0,.2,1);pointer-events:none;"></div>
+    <button class="tab active" onclick="setView('team',this)" style="flex:1;height:32px;padding:0 4px;border:none;background:transparent;font-size:16px;font-weight:400;cursor:pointer;font-family:'Roboto',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#FFC000;transition:color 0.2s;">Dag</button>
+    <button class="tab" onclick="setView('week',this)" style="flex:1;height:32px;padding:0 4px;border:none;background:transparent;font-size:16px;font-weight:400;cursor:pointer;font-family:'Roboto',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#5566aa;transition:color 0.2s;">Week</button>
+    <button class="tab" onclick="setView('personal',this)" style="flex:1;height:32px;padding:0 4px;border:none;background:transparent;font-size:16px;font-weight:400;cursor:pointer;font-family:'Roboto',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;color:#5566aa;transition:color 0.2s;">Jaar</button>
+  </div>
+  <div id="navBtns" style="display:flex;flex-direction:row;align-items:center;gap:4px;padding:0 0 0 8px;">
+    <button onclick="navigate(-1)" style="width:36px;height:36px;background:#0d2254;border:1px solid #2a3a6a;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="width:0;height:0;border-style:solid;border-width:7px 11px 7px 0;border-color:transparent #FFC000 transparent transparent;display:inline-block"></span></button>
+    <button id="todayBtn2" onclick="goToday()" style="width:36px;height:36px;background:#0d2254;border:1px solid #2a3a6a;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="width:0;height:0;border-style:solid;border-width:0 8px 13px 8px;border-color:transparent transparent #FFC000 transparent;display:inline-block"></span></button>
+    <button onclick="navigate(1)" style="width:36px;height:36px;background:#0d2254;border:1px solid #2a3a6a;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;"><span style="width:0;height:0;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #FFC000;display:inline-block"></span></button>
   </div>
 </div>
 
@@ -268,11 +273,22 @@ function badge(code){
 }
 function visible(forceAll){if(forceAll) return employees;return selectedPerson?[selectedPerson]:employees;}
 
+function movePill(){
+  const track=document.getElementById('tabTrack');
+  const pill=document.getElementById('tabPill');
+  const activTab=track&&track.querySelector('.tab.active');
+  if(!pill||!activTab||!track) return;
+  const tr=track.getBoundingClientRect();
+  const ar=activTab.getBoundingClientRect();
+  pill.style.left=(ar.left-tr.left+4)+'px';
+  pill.style.width=(ar.width-8)+'px';
+}
 function setView(v,el){
   currentView=v;
   if(v==='team') currentDate=new Date();
-  document.querySelectorAll('.tab').forEach(t=>{t.style.background='#0d2254';t.style.color='#ffffff';t.style.padding='7px 4px';});
-  if(el){el.style.background='#0d2254';el.style.color='#ffffff';el.style.padding='7px 4px';}
+  document.querySelectorAll('.tab').forEach(t=>{t.classList.remove('active');t.style.color='#5566aa';t.style.fontWeight='400';});
+  if(el){el.classList.add('active');el.style.color='#FFC000';el.style.fontWeight='400';}
+  setTimeout(movePill,0);
   document.getElementById('personSelect').style.display=v==='personal'?'block':'none';
 
   const ctrl=document.querySelector('.controls');
@@ -285,16 +301,39 @@ function setView(v,el){
   else render();
 }
 function navigate(dir){
-  if(currentView==='week') currentDate=addDays(currentDate,dir*7);
+  if(currentView==='week'){currentDate=addDays(currentDate,dir*7);render();}
+  else if(currentView==='team'){
+    currentDate=addDays(currentDate,dir);
+    const dstr=ds(currentDate);
+    const shell=document.getElementById('app-shell');
+    const target=document.querySelector(`.day-section[data-dstr="${dstr}"]`);
+    if(target&&shell){
+      const tabsH=(document.querySelector('.tabs')||{offsetHeight:44}).offsetHeight;
+      const ctrlH=(document.querySelector('.controls')||{offsetHeight:80}).offsetHeight;
+      shell.scrollTo({top:shell.scrollTop+(target.getBoundingClientRect().top-shell.getBoundingClientRect().top)-tabsH-ctrlH,behavior:'smooth'});
+    } else render();
+  }
   else if(currentView==='personal'){
     const idx=employees.indexOf(selectedPerson);
     const next=(idx+dir+employees.length)%employees.length;
     selectedPerson=employees[next];
     document.getElementById('personSelect').value=selectedPerson;
     render();
-    return;
-  } else currentDate=addDays(currentDate,dir);
-  render();
+  } else {
+    // Team: scroll to adjacent day
+    currentDate=addDays(currentDate,dir);
+    const dstr=ds(currentDate);
+    const shell=document.getElementById('app-shell');
+    const target=document.querySelector('.day-section[data-dstr="'+dstr+'"]');
+    if(target&&shell){
+      const tabsH=(document.querySelector('.tabs')||{offsetHeight:44}).offsetHeight;
+      const ctrlH=(document.querySelector('.controls')||{offsetHeight:80}).offsetHeight;
+      const offset=tabsH+ctrlH;
+      const shellRect=shell.getBoundingClientRect();
+      const elRect=target.getBoundingClientRect();
+      shell.scrollTo({top:shell.scrollTop+(elRect.top-shellRect.top)-offset,behavior:'smooth'});
+    } else render();
+  }
 }
 function goToday(){currentDate=new Date();render();}
 function onPersonChange(){selectedPerson=document.getElementById('personSelect').value;render();}
@@ -331,11 +370,11 @@ function toggleMode(){
   const btn=document.getElementById('modeBtn');
   if(body.classList.contains('dark')){
     body.classList.remove('dark');
-    if(btn) btn.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 8.5A6.5 6.5 0 1 1 7.5 2a5 5 0 0 0 6.5 6.5z" fill="#ffffff"/></svg>';
+    if(btn) btn.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 8.5A6.5 6.5 0 1 1 7.5 2a5 5 0 0 0 6.5 6.5z" fill="#FFC000"/></svg>';
     try{localStorage.setItem('hccc-mode','light');}catch(e){}
   } else {
     body.classList.add('dark');
-    if(btn) btn.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#ffffff"/><line x1="8" y1="1" x2="8" y2="3" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/></svg>';
+    if(btn) btn.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#FFC000"/><line x1="8" y1="1" x2="8" y2="3" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/></svg>';
     try{localStorage.setItem('hccc-mode','dark');}catch(e){}
   }
 }
@@ -346,7 +385,7 @@ function renderWeek(){
   const mon=monday(currentDate),days=Array.from({length:7},(_,i)=>addDays(mon,i));
   const t=todayStr(),vis=visible(true);
   document.getElementById('periodLabel').innerHTML=
-    `<div style='color:#FFC000;font-size:15px;font-weight:400;letter-spacing:1px;text-transform:uppercase;line-height:1.2'>WEEK ${weekNum(mon)}</div>`+
+    `<div style='color:#FFC000;font-size:15px;font-weight:300;letter-spacing:1px;text-transform:uppercase;line-height:1.2;font-family:Roboto,sans-serif'>WEEK ${weekNum(mon)}</div>`+
     `<div style='color:#fff;font-size:34px;font-weight:700;line-height:1.1;font-family:Roboto,sans-serif'>${days[0].getDate()} ${MONTHS_NL[days[0].getMonth()].charAt(0).toUpperCase()+MONTHS_NL[days[0].getMonth()].slice(1)} – ${days[6].getDate()} ${MONTHS_NL[days[6].getMonth()].charAt(0).toUpperCase()+MONTHS_NL[days[6].getMonth()].slice(1)} ’${String(days[6].getFullYear()).slice(2)}</div>`;
   let h='<div class="week-grid">';
   h+=`<div class="week-header-cell" style="text-align:center;padding:3px 2px;font-size:13px;font-weight:700">Week<br>${weekNum(mon)}</div>`;
@@ -478,38 +517,86 @@ function isShiftActive(shiftCode){
   if(end<start&&c<start) c+=24*60; // adjust for overnight
   return c>=start&&c<end;
 }
-function renderTeam(){
-  const d=currentDate,dstr=ds(d);
-  document.getElementById('periodLabel').innerHTML=
-    `<div style='color:#FFC000;font-size:15px;font-weight:400;letter-spacing:1px;text-transform:uppercase;line-height:1.2'>WEEK ${weekNum(d)}</div>`+
-    `<div style='color:#fff;font-size:34px;font-weight:700;line-height:1.1;font-family:Roboto,sans-serif'>${DAYS_NL[d.getDay()].charAt(0).toUpperCase()+DAYS_NL[d.getDay()].slice(1)} ${d.getDate()} ${MONTHS_NL[d.getMonth()].charAt(0).toUpperCase()+MONTHS_NL[d.getMonth()].slice(1)} ’${String(d.getFullYear()).slice(2)}</div>`;
+function renderDaySection(dstr, isToday){
+  const parts=dstr.split('-'),d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
   const groups={o:[],x:[],mx:[],m:[],n:[],e:[],examen:[],opl:[],z:[],other:[],v:[]};
   employees.forEach(name=>{const shift=(ROSTER[name]||{})[dstr];if(!shift) return;const k=shift.trim().toLowerCase().replace(/\.$/,'');(groups[k]||groups.other).push({name,shift});});
-  const labels={o:'Ochtenddienst (05:45–14:15)',x:'Dagdienst (08:00–16:30)',mx:'MX dienst (10:30–19:00)',m:'Middagdienst (13:45–22:15)',n:'Nachtdienst (21:45–06:15)',e:'Extra',examen:'Examen',opl:'Opleiding',z:'Ziek',other:'Overig',v:'Verlof'};
-  let h='',any=false;
+  const labels={o:'Ochtenddienst 05:45 - 14:15',x:'Dagdienst 08:00 - 16:30',mx:'MX dienst 10:30 - 19:00',m:'Middagdienst 13:45 - 22:15',n:'Nachtdienst 21:45 - 06:15',e:'Extra',examen:'Examen',opl:'Opleiding',z:'Ziek',other:'Overig',v:'Verlof'};
+  const dayLabel=DAYS_NL[d.getDay()].charAt(0).toUpperCase()+DAYS_NL[d.getDay()].slice(1)+' '+d.getDate()+' '+MONTHS_NL[d.getMonth()].charAt(0).toUpperCase()+MONTHS_NL[d.getMonth()].slice(1)+' \''+String(d.getFullYear()).slice(2);
+  const weekLabel='WEEK '+weekNum(d);
+  const todayBadge='';
+  let h=`<div class="day-section" data-dstr="${dstr}" style="margin-bottom:4px;">`;
+  const lineColor=isToday?'#FFC000':'var(--border)';
+  const lineH=isToday?'2px':'1px';
+  const dateStyle=isToday?'font-size:16px;font-weight:700;color:#0d2254;white-space:nowrap;background:#FFC000;padding:4px 12px;border-radius:20px;':'font-size:16px;font-weight:600;color:var(--muted);white-space:nowrap;';
+  const dateText=isToday?dayLabel+' — VANDAAG':dayLabel;
+  h+=`<div style="display:flex;align-items:center;gap:8px;margin:${isToday?'24px':'56px'} 10px 10px;">`;
+  h+=`<div style="flex:1;height:${lineH};background:${lineColor};border-radius:1px;"></div>`;
+  h+=`<span style="${dateStyle}">${dateText}</span>`;
+  h+=`<div style="flex:1;height:${lineH};background:${lineColor};border-radius:1px;"></div>`;
+  h+=`</div>`;
+  let any=false;
   ['o','x','mx','m','n','e','examen','opl','other','z','v'].forEach(k=>{
     const ppl=groups[k];if(!ppl.length) return;any=true;
     const sInfo=si(k)||{solid:'#888'};
     const count=ppl.length;
-    h+=`<div class="team-section-label" style="display:flex;align-items:center;gap:8px;padding-left:10px;border-bottom:2px solid ${sInfo.solid||'#888'};"><span style="display:inline-flex;align-items:center;justify-content:center;background:${sInfo.solid||'#888'};color:#0d2254;font-weight:700;font-size:12px;min-width:24px;height:24px;border-radius:6px;padding:0 5px;text-shadow:0 1px 2px rgba(0,0,0,0.5);flex-shrink:0">${count}</span>${labels[k].replace(/(\([^)]+\))/,"<span style='font-weight:400'>$1</span>")}</div><div class="team-grid">`;
+    h+=`<div class="team-section-label" style="display:flex;align-items:center;gap:8px;padding-left:10px;border-bottom:2px solid ${sInfo.solid||'#888'};"><span style="display:inline-flex;align-items:center;justify-content:center;background:${sInfo.solid||'#888'};color:#0d2254;font-weight:700;font-size:12px;min-width:24px;height:24px;border-radius:6px;padding:0 5px;flex-shrink:0">${count}</span>${(()=>{const sp=labels[k].indexOf(' ');if(sp<0)return labels[k];const nm=labels[k].slice(0,sp);const tm=labels[k].slice(sp+1);return '<span style="font-weight:400;font-family:Roboto,sans-serif">'+nm+'</span> <span style="font-weight:300;font-size:16px;font-family:Roboto,sans-serif">'+tm+'</span>';})()}</div><div class="team-grid">`;
     ppl.forEach(({name,shift})=>{
       const ss=si(shift);
-      const mxTime=(shift==='mx'||shift==='mx.')?(d.getDay()===0||d.getDay()===6?'09:00–17:30':'10:30–19:00'):ss.time;
       const tNote=NOTES[name]&&NOTES[name][dstr];
       const isActive=dstr===todayStr()&&isShiftActive(shift);
       const activeOutline=isActive?`border:2px solid ${ss.solid||'#FFC000'};box-shadow:0 0 0 1px ${ss.solid||'#FFC000'};`:'border:2px solid transparent;';
       const greenDot=isActive?'<span style="position:absolute;top:6px;right:6px;width:13px;height:13px;border-radius:50%;background:#22c55e;z-index:5"></span>':'';
-      h+=`<div class="team-card" style="${activeOutline}position:relative;" onclick="showShift('${name.replace(/'/g,"\\'")}',' ${dstr}','${shift}')">
+      h+=`<div class="team-card" style="${activeOutline}position:relative;" onclick="showShift('${name.replace(/'/g,"\\'")}','${dstr}','${shift}')">
         <span class="tc-badge" style="color:${contrastText(ss.solid||'#555')};background:${ss.solid||'#555'};font-weight:700">${ss.short}</span>
         <div><div class="tc-name">${name.split(' ')[0]}</div>${tNote?`<div style="font-size:15px;color:#cc0000;font-style:italic;margin-top:4px">${tNote}</div>`:''}${greenDot}</div>
       </div>`;
     });
     h+='</div>';
   });
-  if(!any) h='<div style="padding:20px;text-align:center;color:var(--muted)">Geen diensten gepland</div>';
-  document.getElementById('mainContent').innerHTML=h;
+  if(!any) h+='<div style="padding:8px 20px 16px;color:var(--muted);font-size:14px;">Geen diensten gepland</div>';
+  h+='</div>';
+  return h;
 }
 
+let teamObserver=null;
+function renderTeam(){
+  const today=todayStr();
+  let h='';
+  for(let i=-14;i<=45;i++) h+=renderDaySection(ds(addDays(new Date(),i)), ds(addDays(new Date(),i))===today);
+  document.getElementById('mainContent').innerHTML=h;
+
+  function updatePeriodLabel(dstr){
+    const parts=dstr.split('-'),d=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+    currentDate=d;
+    document.getElementById('periodLabel').innerHTML=
+      `<div style='color:#FFC000;font-size:15px;font-weight:300;letter-spacing:1px;text-transform:uppercase;line-height:1.2;font-family:Roboto,sans-serif'>WEEK ${weekNum(d)}</div>`+
+      `<div style='color:#fff;font-size:34px;font-weight:700;line-height:1.1;font-family:Roboto,sans-serif'>${DAYS_NL[d.getDay()].charAt(0).toUpperCase()+DAYS_NL[d.getDay()].slice(1)} ${d.getDate()} ${MONTHS_NL[d.getMonth()].charAt(0).toUpperCase()+MONTHS_NL[d.getMonth()].slice(1)} '${String(d.getFullYear()).slice(2)}</div>`;
+  }
+
+  if(teamObserver) teamObserver.disconnect();
+  const shell=document.getElementById('app-shell');
+  const tabsH=(document.querySelector('.tabs')||{offsetHeight:44}).offsetHeight;
+  const ctrlH=(document.querySelector('.controls')||{offsetHeight:80}).offsetHeight;
+  teamObserver=new IntersectionObserver(entries=>{
+    const vis=entries.filter(e=>e.isIntersecting).sort((a,b)=>a.boundingClientRect.top-b.boundingClientRect.top);
+    if(vis.length) updatePeriodLabel(vis[0].target.dataset.dstr);
+  },{root:shell,rootMargin:`-${tabsH+ctrlH}px 0px -40% 0px`,threshold:0});
+  document.querySelectorAll('.day-section').forEach(el=>teamObserver.observe(el));
+
+  setTimeout(()=>{
+    const todaySection=document.querySelector(`.day-section[data-dstr="${today}"]`);
+    if(todaySection&&shell){
+      const offset=tabsH+ctrlH;
+      const shellRect=shell.getBoundingClientRect();
+      // Find the first shift label inside today's section
+      const firstShift=todaySection.querySelector('.team-section-label,.team-grid');
+      const scrollTarget=firstShift||todaySection;
+      const elRect=scrollTarget.getBoundingClientRect();
+      shell.scrollTo({top:shell.scrollTop+(elRect.top-shellRect.top)-offset,behavior:'instant'});
+    }
+  },80);
+}
 /* ===== SHIFT POPUP ===== */
 function showShift(name,dateStr,code){
   if(!code||!code.trim()) return;
@@ -606,7 +693,7 @@ function dpSelect(dstr){
 
 render();
 (function(){
-  try{if(localStorage.getItem("hccc-mode")==="dark"){document.body.classList.add("dark");const b=document.getElementById("modeBtn");if(b)b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#ffffff"/><line x1="8" y1="1" x2="8" y2="3" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/></svg>';}}catch(e){}
+  try{if(localStorage.getItem("hccc-mode")==="dark"){document.body.classList.add("dark");const b=document.getElementById("modeBtn");if(b)b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#FFC000"/><line x1="8" y1="1" x2="8" y2="3" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/></svg>';}}catch(e){}
   const ctrl=document.querySelector(".controls");if(ctrl)ctrl.style.display=currentView==="personal"?"none":"flex";
   const ph=document.getElementById("personalHeader");if(ph)ph.style.display=currentView==="personal"?"block":"none";
   const tb2=document.getElementById("todayBtn2");if(tb2)tb2.style.display="flex";
