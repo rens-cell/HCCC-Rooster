@@ -563,7 +563,7 @@ let teamObserver=null;
 function renderTeam(){
   const today=todayStr();
   let h='';
-  for(let i=-14;i<=45;i++) h+=renderDaySection(ds(addDays(new Date(),i)), ds(addDays(new Date(),i))===today);
+  const anchor=currentDate;  for(let i=-14;i<=45;i++) h+=renderDaySection(ds(addDays(anchor,i)), ds(addDays(anchor,i))===today);
   document.getElementById('mainContent').innerHTML=h;
 
   function updatePeriodLabel(dstr){
@@ -672,8 +672,26 @@ function renderDP(){
 }
 
 function dpSelect(dstr){
-  const parts=dstr.split('-');currentDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
-  document.getElementById('dpOverlay').classList.remove('open');render();
+  const parts=dstr.split('-');
+  currentDate=new Date(parseInt(parts[0]),parseInt(parts[1])-1,parseInt(parts[2]));
+  document.getElementById('dpOverlay').classList.remove('open');
+  if(currentView==='team'){
+    // Try to scroll to the selected date in the continuous list
+    const shell=document.getElementById('app-shell');
+    const target=document.querySelector(`.day-section[data-dstr="${dstr}"]`);
+    if(target&&shell){
+      const tabsH=(document.querySelector('.tabs')||{offsetHeight:44}).offsetHeight;
+      const ctrlH=(document.querySelector('.controls')||{offsetHeight:80}).offsetHeight;
+      const firstShift=target.querySelector('.team-section-label,.team-grid');
+      const scrollEl=firstShift||target;
+      shell.scrollTo({top:shell.scrollTop+(scrollEl.getBoundingClientRect().top-shell.getBoundingClientRect().top)-tabsH-ctrlH,behavior:'smooth'});
+    } else {
+      // Date out of rendered range - re-render centred on selected date
+      render();
+    }
+  } else {
+    render();
+  }
 }
 
 /* ===== SWIPE ===== */
