@@ -129,7 +129,9 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 .team-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:4px;}
 .team-card{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px 6px 6px;min-width:140px;max-width:calc(50% - 6px);flex:1;cursor:pointer;min-height:40px;overflow:hidden;}
 .tc-badge{border-radius:6px;padding:6px 12px;font-size:16px;font-weight:700;font-family:'DM Mono',monospace;flex-shrink:0;}
-.tc-name{font-size:15px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tc-name{font-size:15px;font-weight:400;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+body:not(.dark) .tc-name{font-weight:500;}
+body.dark .tc-name{font-weight:400;}
 .tc-time{font-size:12px;color:#ffffff;margin-top:2px;}
 
 
