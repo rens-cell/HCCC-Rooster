@@ -564,6 +564,8 @@ function render(){if(currentView==='week') renderWeek();else if(currentView==='p
 /* ===== WEEK ===== */
 function renderWeek(){
   const isDark=document.body.classList.contains('dark');
+  const shell=document.getElementById('app-shell');
+  if(shell) shell.scrollTo({top:0,behavior:'instant'});
   const mon=monday(currentDate),days=Array.from({length:7},(_,i)=>addDays(mon,i));
   const t=todayStr(),vis=getWeekOrder();
   document.getElementById('periodLabel').innerHTML=
