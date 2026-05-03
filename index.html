@@ -96,8 +96,8 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 .day-num{display:block;font-size:13px;font-weight:600;color:#ffffff;margin-top:0;text-transform:none;}
 .today-hdr .day-num{color:#0d2254;}
 .name-cell{padding:0 6px;font-size:14px;font-weight:400;font-family:Roboto,sans-serif;color:var(--text);border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;align-items:center;white-space:nowrap;cursor:pointer;height:30px;}
-.shift-cell{border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;height:30px;display:flex;align-items:center;justify-content:center;position:relative;padding:3px;box-sizing:border-box;overflow:visible;}
-.shift-badge{display:flex;align-items:center;justify-content:center;width:24px;height:24px;font-size:11px;font-family:Roboto,sans-serif;font-weight:700;border-radius:4px;flex-shrink:0;}
+.shift-cell{border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;height:30px;width:100%;display:flex;align-items:center;justify-content:center;position:relative;padding:0;box-sizing:border-box;overflow:hidden;}
+.shift-badge{display:flex;align-items:center;justify-content:center;width:26px;height:26px;min-width:26px;min-height:26px;max-width:26px;max-height:26px;font-family:Roboto,sans-serif;font-weight:700;border-radius:4px;flex-shrink:0;overflow:hidden;}
 .today-overlay{display:none;}
 
 
@@ -317,13 +317,13 @@ function badge(code,name){
   if(s2){
     const sh1=shortFor(code,name);
     const sh2=s2.short;
-    const mkBar=(bg,sh)=>{const fs=sh.length>=3?'6px':sh.length===2?'6px':'7px';return `<span style="display:flex;align-items:center;justify-content:center;width:24px;flex:1;border-radius:3px;background:${bg};color:#fff;font-weight:700;font-size:${fs};font-family:Roboto,sans-serif;">${sh}</span>`;};
-    return `<span style="display:flex;flex-direction:column;gap:1px;width:24px;height:24px;flex-shrink:0;">${mkBar(s.solid||'#555',sh1)}${mkBar(s2.solid||'#555',sh2)}</span>`;
+    const mkBar=(bg,sh)=>{const fs=sh.length>=3?'8px':sh.length===2?'8px':'9px';return `<span style="display:flex;align-items:center;justify-content:center;width:26px;flex:1;border-radius:3px;background:${bg};color:#fff;font-weight:700;font-size:${fs};font-family:Roboto,sans-serif;">${sh}</span>`;};
+    return `<span style="display:flex;flex-direction:column;gap:1px;width:26px;height:26px;flex-shrink:0;">${mkBar(s.solid||'#555',sh1)}${mkBar(s2.solid||'#555',sh2)}</span>`;
   }
   const bg=s.solid||'#555';
   const fg=s.text||contrastText(bg);
   const short=shortFor(code,name);
-  const fs=short.length>=3?'8px':short.length===2?'10px':'11px';
+  const fs=short.length>=3?'10px':short.length===2?'12px':'14px';
   return `<span class="shift-badge" style="background:${bg};color:${fg};font-size:${fs};">${short}</span>`;
 }
 function visible(forceAll){if(forceAll) return employees;return selectedPerson?[selectedPerson]:employees;}
@@ -593,8 +593,8 @@ function renderWeek(){
       const todayTint=isT?(isDark?'background-image:linear-gradient(rgba(255,192,0,0.13),rgba(255,192,0,0.13));':'background-image:linear-gradient(rgba(13,34,84,0.10),rgba(13,34,84,0.10));'):'';
       const hasNote=shift&&NOTES[name]&&NOTES[name][dstr];
       const noteDot=hasNote?'<span style="position:absolute;top:1px;right:1px;z-index:12;pointer-events:none;"><svg width="13" height="12" viewBox="0 0 20 18" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 19,17 1,17" fill="#cc0000" stroke="#fff" stroke-width="1.5"/><text x="10" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff" font-family="Roboto,sans-serif">!</text></svg></span>':'';
-      const clickAttr=shift?`onclick="showShift('${name.replace(/'/g,"\\'")}',' ${dstr}','${shift}')" style="position:relative;cursor:pointer"`:'style="position:relative"';
-      h+=`<div class="shift-cell${tc}" style="${rowBg}${todayTint}" ${clickAttr}>${shift?badge(shift,name):''}${ov}${noteDot}</div>`;
+      const clickAttr=shift?`onclick="showShift('${name.replace(/'/g,"\\'")}',' ${dstr}','${shift}')" style="${rowBg}${todayTint}position:relative;cursor:pointer"`:'style="${rowBg}${todayTint}position:relative;"';
+      h+=`<div class="shift-cell${tc}" ${clickAttr}>${shift?badge(shift,name):''}${ov}${noteDot}</div>`;
     });
   });
   h+='</div></div>';
