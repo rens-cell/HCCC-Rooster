@@ -516,6 +516,7 @@ function toggleMode(){
     if(btn) btn.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#FFC000"/><line x1="8" y1="1" x2="8" y2="3" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/></svg>';
     try{localStorage.setItem('hccc-mode','dark');}catch(e){}
   }
+  if(currentView==='week') renderWeek();
 }
 var _holdTimer=null,_holdFired=false;
 function _holdStart(e){_holdFired=false;_holdTimer=setTimeout(function(){_holdFired=true;if(currentView!=="personal")openDatePicker();},700);}
@@ -560,9 +561,9 @@ function renderWeek(){
   const t=todayStr(),vis=getWeekOrder();
   document.getElementById('periodLabel').innerHTML=
     `<div style='color:#fff;font-size:15px;font-weight:400;font-family:Roboto,sans-serif;line-height:1.3;'>Week <span style="color:#FEB900">${weekNum(mon)}</span></div><div style='color:#fff;font-size:26px;font-weight:500;line-height:1.2;font-family:Roboto,sans-serif;'>${days[0].getDate()} ${MONTHS_FULL[days[0].getMonth()].charAt(0).toUpperCase()+MONTHS_FULL[days[0].getMonth()].slice(1)} – ${days[6].getDate()} ${MONTHS_FULL[days[6].getMonth()].charAt(0).toUpperCase()+MONTHS_FULL[days[6].getMonth()].slice(1)}</div>`;
-  const resetBtn=weekUser?`<button onclick="weekUser=null;try{localStorage.removeItem('hccc-week-user');}catch(e){}renderWeek();" style="background:#FEB900;border:none;border-radius:20px;padding:3px 8px;font-size:13px;font-weight:700;color:#111f39;cursor:pointer;font-family:Roboto,sans-serif;margin-top:4px;display:block;width:calc(100% - 4px);">reset</button>`:'';
+  const resetBtn=weekUser?`<button onclick="weekUser=null;try{localStorage.removeItem('hccc-week-user');}catch(e){}renderWeek();" style="background:#FEB900;border:none;border-radius:20px;padding:2px 10px;font-size:15px;font-weight:700;color:#111f39;cursor:pointer;font-family:Roboto,sans-serif;display:inline-block;">reset</button>`:'';
   let h='<div style="padding:4px 3px;border:1.5px solid #FEB900;border-radius:11px;margin:0 1px;"><div class="week-grid">';
-  h+=`<div class="week-header-cell" style="text-align:center;padding:3px 2px;font-size:9px;font-weight:700;flex-direction:column;gap:2px;width:80px;">${resetBtn}</div>`;
+  h+=`<div class="week-header-cell" style="text-align:center;padding:3px 2px;font-size:9px;font-weight:700;flex-direction:column;gap:0;width:80px;justify-content:center;align-items:center;">${resetBtn}</div>`;
   days.forEach(d=>{
     const isT=ds(d)===t;
     h+=`<div class="week-header-cell${isT?' today-hdr':''}" style="position:relative">${DAYS_NL[d.getDay()].toUpperCase()}<span class="day-num" style="font-size:11px;font-weight:700;margin-top:1px;text-transform:none;">${d.getDate()}</span>${isT?'<span class="today-overlay today-overlay-top"></span>':''}</div>`;
@@ -571,7 +572,9 @@ function renderWeek(){
     const shifts=ROSTER[name]||{};
     const rowBg=rowIdx%2===0?'background:var(--row-even);':'background:var(--row-odd);';
     const isSelected=name===weekUser;
-    h+=`<div class="name-cell" style="${rowBg}cursor:pointer;${isSelected?'font-weight:700;color:#FEB900;':''}" onclick="setWeekUser('${name.replace(/'/g,String.fromCharCode(92)+String.fromCharCode(39))}')"><span style="display:flex;align-items:center;gap:3px;overflow:hidden;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name.split(' ')[0]}</span></span></div>`;
+    const isDark=document.body.classList.contains('dark');
+    const selStyle=isSelected?(isDark?'font-weight:700;color:#FEB900;':'font-weight:700;'):'';
+    h+=`<div class="name-cell" style="${rowBg}cursor:pointer;${selStyle}" onclick="setWeekUser('${name.replace(/'/g,String.fromCharCode(92)+String.fromCharCode(39))}')"><span style="display:flex;align-items:center;gap:3px;overflow:hidden;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name.split(' ')[0]}</span></span></div>`;
     days.forEach(d=>{
       const dstr=ds(d),shift=shifts[dstr],isT=dstr===t;
       const isLast=vis.indexOf(name)===vis.length-1;
@@ -932,6 +935,13 @@ function dpSelect(dstr){
 
 render();
 (function(){
+  const msToNextMinute = (60 - new Date().getSeconds()) * 1000 - new Date().getMilliseconds();
+  setTimeout(function tick(){
+    if(currentView === 'team') renderTeam();
+    setInterval(function(){ if(currentView === 'team') renderTeam(); }, 60000);
+  }, msToNextMinute);
+})();
+(function(){
   try{if(localStorage.getItem("hccc-mode")==="dark"){document.body.classList.add("dark");const b=document.getElementById("modeBtn");if(b)b.innerHTML='<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="3" fill="#FFC000"/><line x1="8" y1="1" x2="8" y2="3" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="13" x2="8" y2="15" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="1" y1="8" x2="3" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="13" y1="8" x2="15" y2="8" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="3.05" y1="3.05" x2="4.46" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="11.54" y1="11.54" x2="12.95" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="12.95" y1="3.05" x2="11.54" y2="4.46" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/><line x1="4.46" y1="11.54" x2="3.05" y2="12.95" stroke="#FFC000" stroke-width="1.5" stroke-linecap="round"/></svg>';}}catch(e){}
   const ctrl=document.querySelector(".controls");if(ctrl)ctrl.style.display="flex";
   const ph=document.getElementById("personalHeader");if(ph)ph.style.display="none";
@@ -960,8 +970,10 @@ render();
 #manualOverlay.open{display:flex;}
 .manual-modal{background:var(--surface);border:2px solid #FFC000;border-radius:18px;padding:16px 16px 12px;width:88%;max-width:340px;height:82vh;max-height:82vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
 .manual-slides{display:flex;transition:transform .35s cubic-bezier(.4,0,.2,1);width:100%;height:100%;}
-.manual-slide{flex:0 0 100%;display:flex;flex-direction:column;overflow:hidden;padding-top:4px;}
+.manual-slide{flex:0 0 100%;display:flex;flex-direction:column;overflow:hidden;padding-top:2px;}
 .ms-close-x{position:absolute;top:10px;right:10px;background:none;border:none;color:#FFC000;font-size:20px;font-weight:700;cursor:pointer;padding:0;line-height:1;z-index:10;}
+body:not(.dark) .ms-close-x{color:#111f39;}
+body:not(.dark) #manualOverlay .manual-text-gold{color:#111f39 !important;}
 .ms-nav-bar{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 0 4px;flex-shrink:0;}
 .ms-nav-arrow{background:none;border:none;color:#FEB900;font-size:28px;font-weight:700;cursor:pointer;padding:0 6px;line-height:1;}
 .ms-dots{display:flex;gap:8px;margin:0;}
@@ -1016,7 +1028,7 @@ render();
   <div id="manualSlides" style="display:flex;flex:1;min-height:0;transition:transform .35s cubic-bezier(.4,0,.2,1);">
 
     <!-- Slide 1: Bovenmenu navigatie -->
-    <div class="manual-slide" style="padding-top:4px;align-items:center;">
+    <div class="manual-slide" style="padding-top:2px;align-items:center;">
       <div class="ms-phone" style="width:180px;height:150px;margin-bottom:14px;">
         <div class="ms-screen">
           <!-- Top row: sun + pill tabs + ? -->
@@ -1053,10 +1065,10 @@ render();
       <!-- Text -->
       <div style="display:flex;flex-direction:column;gap:10px;width:100%;overflow-y:auto;">
         <div>
-          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;">Dag</div>
+          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;" class="manual-text-gold">Dag</div>
           <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:5px;">
             <div style="font-size:13px;color:var(--muted);flex-shrink:0;">-</div>
-            <div style="font-size:13px;color:var(--muted);line-height:1.4;">Gebruik de <span style="color:#FEB900;font-weight:700;">&lt;</span> pijltjes <span style="color:#FEB900;font-weight:700;">&gt;</span> toesten om door de dagen, weken en medewerkers te navigeren. Of swipe links / rechts/omlaag op het rooster zelf</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.4;">Gebruik de <span style="color:#FEB900;font-weight:700;" class="manual-text-gold">&lt;</span> pijltjes <span style="color:#FEB900;font-weight:700;" class="manual-text-gold">&gt;</span> toesten om door de dagen, weken en medewerkers te navigeren. Of swipe links / rechts/omlaag op het rooster zelf</div>
           </div>
           <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:5px;">
             <div style="font-size:13px;color:var(--muted);flex-shrink:0;">-</div>
@@ -1068,7 +1080,7 @@ render();
           </div>
         </div>
         <div>
-          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;">Week</div>
+          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;" class="manual-text-gold">Week</div>
           <div style="display:flex;gap:6px;align-items:flex-start;margin-bottom:5px;">
             <div style="font-size:13px;color:var(--muted);flex-shrink:0;">-</div>
             <div style="font-size:13px;color:var(--muted);line-height:1.4;">Swipe links/rechts om door de weken te bladeren.</div>
@@ -1079,11 +1091,11 @@ render();
           </div>
           <div style="display:flex;gap:6px;align-items:flex-start;">
             <div style="font-size:13px;color:var(--muted);flex-shrink:0;">-</div>
-            <div style="font-size:13px;color:var(--muted);line-height:1.4;">Klik op <span style="color:#FEB900;font-weight:700;">reset</span> om de volgorde van medewerkers terug te zetten naar de volgorde uit excel</div>
+            <div style="font-size:13px;color:var(--muted);line-height:1.4;">Klik op <span style="color:#FEB900;font-weight:700;" class="manual-text-gold">reset</span> om de volgorde van medewerkers terug te zetten naar de volgorde uit excel</div>
           </div>
         </div>
         <div>
-          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;">Jaar</div>
+          <div style="font-size:15px;font-weight:700;color:#FEB900;margin-bottom:5px;" class="manual-text-gold">Jaar</div>
           <div style="display:flex;gap:6px;align-items:flex-start;">
             <div style="font-size:13px;color:var(--muted);flex-shrink:0;">-</div>
             <div style="font-size:13px;color:var(--muted);line-height:1.4;">Klik op de naam van de medewerker om het jaarrooster van deze medewerker te bekijken</div>
