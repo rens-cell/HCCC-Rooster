@@ -91,6 +91,25 @@ body{font-family:'Roboto',sans-serif;background:#000;color:var(--text);font-size
 
 /* WEEK */
 .week-grid{display:grid;grid-template-columns:80px repeat(7,minmax(30px,1fr));border-radius:9px;overflow:hidden;width:100%;}
+/* Week scroll strip */
+#week-scroll-wrap{position:relative;overflow:hidden;margin:0 1px;}
+#week-names-col{position:absolute;left:0;top:0;bottom:0;width:80px;z-index:10;display:flex;flex-direction:column;pointer-events:none;}
+#week-names-col .name-cell{pointer-events:auto;background:var(--surface);}
+#week-scroll{overflow-x:scroll;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory;scrollbar-width:none;cursor:grab;}
+#week-scroll::-webkit-scrollbar{display:none;}
+#week-scroll.grabbing{cursor:grabbing;}
+#week-inner{display:flex;flex-direction:column;}
+.week-day-col{display:flex;flex-direction:column;flex-shrink:0;scroll-snap-align:start;}
+.week-hdr-row{display:flex;position:sticky;top:0;z-index:5;}
+.week-hdr-spacer{width:80px;flex-shrink:0;background:var(--header-bg);border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;}
+.week-day-hdr{flex-shrink:0;background:var(--header-bg);border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3px 1px;font-size:9px;font-weight:700;color:#e8eaf0;font-family:Roboto,sans-serif;text-transform:uppercase;}
+.week-day-hdr.today-hdr{background:#FEB900;color:#111f39;}
+.week-day-hdr.today-hdr .day-num{color:#0d2254;}
+body.dark .week-day-hdr.today-hdr{background:#FEB900;color:#111f39;}
+.week-data-row{display:flex;}
+.week-data-cell{flex-shrink:0;height:30px;border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;align-items:center;justify-content:center;position:relative;box-sizing:border-box;overflow:hidden;}
+.week-data-cell.today-tint{background-image:linear-gradient(rgba(13,34,84,0.10),rgba(13,34,84,0.10));}
+body.dark .week-data-cell.today-tint{background-image:linear-gradient(rgba(255,192,0,0.13),rgba(255,192,0,0.13));}
 .week-header-cell{background:var(--header-bg);padding:3px 1px;text-align:center;font-size:9px;font-weight:700;color:#e8eaf0;font-family:Roboto,sans-serif;text-transform:uppercase;border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;flex-direction:column;align-items:center;justify-content:center;}
 .week-header-cell.today-hdr{background:#FEB900;color:#111f39;}
 .day-num{display:block;font-size:13px;font-weight:600;color:#ffffff;margin-top:0;text-transform:none;}
@@ -376,7 +395,15 @@ function setView(v,el){
   else render();
 }
 function navigate(dir){
-  if(currentView==='week'){currentDate=addDays(currentDate,dir*7);render();}
+  if(currentView==='week'){
+    const scrollEl=document.getElementById('week-scroll');
+    if(scrollEl){
+      const mc=document.getElementById('mainContent');
+      const colW=Math.max(36,Math.floor((mc.offsetWidth-80)/7));
+      scrollEl.scrollBy({left:dir*7*colW,behavior:'smooth'});
+    } else {currentDate=addDays(currentDate,dir*7);render();}
+    return;
+  }
   else if(currentView==='team'){
     currentDate=addDays(currentDate,dir);
     const dstr=ds(currentDate);
@@ -595,43 +622,118 @@ function renderWeek(){
   const isDark=document.body.classList.contains('dark');
   const shell=document.getElementById('app-shell');
   if(shell) shell.scrollTo({top:0,behavior:'instant'});
-  const days=Array.from({length:7},(_,i)=>addDays(currentDate,i));
   const t=todayStr(),vis=getWeekOrder();
-  const wk0=weekNum(days[0]),wk6=weekNum(days[6]);
-  const wkLabel=wk0===wk6?`Week <span style="color:#FEB900">${wk0}</span>`:`Week <span style="color:#FEB900">${wk0}–${wk6}</span>`;
-  const d0=days[0],d6=days[6];
-  const rangeLabel=`${d0.getDate()} ${MONTHS_FULL[d0.getMonth()].charAt(0).toUpperCase()+MONTHS_FULL[d0.getMonth()].slice(1)} – ${d6.getDate()} ${MONTHS_FULL[d6.getMonth()].charAt(0).toUpperCase()+MONTHS_FULL[d6.getMonth()].slice(1)}`;
-  document.getElementById('periodLabel').innerHTML=`<div style='color:#fff;font-size:15px;font-weight:400;font-family:Roboto,sans-serif;line-height:1.3;'>${wkLabel}</div><div style='color:#fff;font-size:26px;font-weight:500;line-height:1.2;font-family:Roboto,sans-serif;'>${rangeLabel}</div>`;
-  const resetBtn=weekUser?`<button onclick="weekUser=null;try{localStorage.removeItem('hccc-week-user');}catch(e){}renderWeek();" style="background:#FEB900;border:none;border-radius:20px;padding:2px 10px;font-size:15px;font-weight:700;color:#111f39;cursor:pointer;font-family:Roboto,sans-serif;display:inline-block;">reset</button>`:'';
+  const mc=document.getElementById('mainContent');
+  const mcW=mc.offsetWidth||350;
+  // colW: width of each day column. Show ~5 cols comfortably, min 36px
+  const colW=Math.max(36,Math.floor((mcW-80)/7));
   const rosterBorder=isDark?'#FEB900':'#003366';
   const wrapperBg=isDark?'var(--row-odd)':'var(--row-even)';
-  let h=`<div style="padding:2px;border:1.5px solid ${rosterBorder};border-radius:11px;margin:0 1px;overflow:hidden;background:${wrapperBg};touch-action:pan-y;user-select:none;"><div class="week-grid">`;
-  h+=`<div class="week-header-cell" style="text-align:center;padding:3px 2px;font-size:9px;font-weight:700;flex-direction:column;gap:0;width:80px;justify-content:center;align-items:center;">${resetBtn}</div>`;
-  days.forEach(d=>{
-    const isT=ds(d)===t;
-    h+=`<div class="week-header-cell${isT?' today-hdr':''}">${DAYS_NL[d.getDay()].toUpperCase()}<span class="day-num" style="font-size:11px;font-weight:700;margin-top:1px;text-transform:none;">${d.getDate()}</span></div>`;
-  });
+
+  // All roster dates
+  const allDates=new Set();
+  Object.values(ROSTER).forEach(s=>Object.keys(s).forEach(d=>allDates.add(d)));
+  const sorted=[...allDates].sort();
+  if(!sorted.length) return;
+  const firstDate=new Date(sorted[0]);
+  const lastDate=new Date(sorted[sorted.length-1]);
+
+  // Build day list
+  const days=[];
+  let dd=new Date(firstDate);
+  while(dd<=lastDate){days.push(new Date(dd));dd=addDays(dd,1);}
+  const nDays=days.length;
+
+  // Name column
+  const resetBtn=weekUser?`<button onclick="weekUser=null;try{localStorage.removeItem('hccc-week-user');}catch(e){}renderWeek();" style="background:#FEB900;border:none;border-radius:20px;padding:2px 8px;font-size:13px;font-weight:700;color:#111f39;cursor:pointer;font-family:Roboto,sans-serif;">reset</button>`:'';
+  let nameColHtml=`<div style="height:34px;display:flex;align-items:center;justify-content:center;border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;background:var(--header-bg);">${resetBtn}</div>`;
   vis.forEach((name,rowIdx)=>{
-    const shifts=ROSTER[name]||{};
-    const rowBg=rowIdx%2===0?'background:var(--row-even);':'background:var(--row-odd);';
+    const bg=rowIdx%2===0?'var(--row-even)':'var(--row-odd)';
     const isSelected=name===weekUser;
-    const selStyle=isSelected?(isDark?'font-weight:700;color:#FEB900;':'font-weight:700;'):'';
-    h+=`<div class="name-cell" style="${rowBg}cursor:pointer;${selStyle}" onclick="setWeekUser('${name.replace(/'/g,String.fromCharCode(92)+String.fromCharCode(39))}')"><span style="display:flex;align-items:center;gap:3px;overflow:hidden;"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name.split(' ')[0]}</span></span></div>`;
-    days.forEach(d=>{
-      const dstr=ds(d),shift=shifts[dstr],isT=dstr===t;
-      const isLast=vis.indexOf(name)===vis.length-1;
-      const tc=isT?(isLast?' today-col today-col-last':' today-col'):'';
-      const ov=isT?`<span class="today-overlay${isLast?' today-overlay-last':''}"></span>`:'';
-      const todayTint=isT?(isDark?'background-image:linear-gradient(rgba(255,192,0,0.13),rgba(255,192,0,0.13));':'background-image:linear-gradient(rgba(13,34,84,0.10),rgba(13,34,84,0.10));'):'';
-      const hasNote=shift&&NOTES[name]&&NOTES[name][dstr];
-      const noteDot=hasNote?'<span style="position:absolute;top:1px;right:1px;z-index:12;pointer-events:none;"><svg width="13" height="12" viewBox="0 0 20 18" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 19,17 1,17" fill="#cc0000" stroke="#fff" stroke-width="1.5"/><text x="10" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff" font-family="Roboto,sans-serif">!</text></svg></span>':'';
-      const clickAttr=shift?`onclick="showShift('${name.replace(/'/g,"\\'")}',' ${dstr}','${shift}')" style="${rowBg}${todayTint}position:relative;cursor:pointer"`:'style="${rowBg}${todayTint}position:relative;"';
-      h+=`<div class="shift-cell${tc}" ${clickAttr}>${shift?(shift==='!!WARN!!'?warnBadge():badge(shift,name)):''}${ov}${noteDot}</div>`;
-    });
+    const sel=isSelected?(isDark?'font-weight:700;color:#FEB900;':'font-weight:700;'):'';
+    nameColHtml+=`<div class="name-cell" style="background:${bg};${sel}" onclick="setWeekUser('${name.replace(/'/g,String.fromCharCode(92)+String.fromCharCode(39))}')"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${name.split(' ')[0]}</span></div>`;
   });
-  h+='</div></div>';
-  document.getElementById('mainContent').innerHTML=h;
-  // Today column highlighted via CSS tint (see .today-col styles)
+
+  // Day columns — one div per day containing header + all employee cells
+  let dayColsHtml='';
+  days.forEach(day=>{
+    const dstr=ds(day),isT=dstr===t;
+    const tint=isT?(isDark?'background-image:linear-gradient(rgba(255,192,0,0.13),rgba(255,192,0,0.13));':'background-image:linear-gradient(rgba(13,34,84,0.10),rgba(13,34,84,0.10));'):'';
+    // Day header
+    let col=`<div style="width:${colW}px;flex-shrink:0;">`;
+    col+=`<div style="height:34px;width:${colW}px;background:${isT?'#FEB900':'var(--header-bg)'};color:${isT?'#111f39':'#e8eaf0'};border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:700;font-family:Roboto,sans-serif;text-transform:uppercase;">${DAYS_NL[day.getDay()].toUpperCase()}<span style="font-size:11px;font-weight:700;color:${isT?'#0d2254':'#fff'};">${day.getDate()}</span></div>`;
+    // Employee cells
+    vis.forEach((name,rowIdx)=>{
+      const shifts=ROSTER[name]||{};
+      const shift=shifts[dstr];
+      const rowBg=rowIdx%2===0?'background:var(--row-even);':'background:var(--row-odd);';
+      const hasNote=shift&&NOTES[name]&&NOTES[name][dstr];
+      const noteDot=hasNote?`<span style="position:absolute;top:1px;right:1px;z-index:12;pointer-events:none;"><svg width="13" height="12" viewBox="0 0 20 18" xmlns="http://www.w3.org/2000/svg"><polygon points="10,1 19,17 1,17" fill="#cc0000" stroke="#fff" stroke-width="1.5"/><text x="10" y="15" text-anchor="middle" font-size="9" font-weight="bold" fill="#fff" font-family="Roboto,sans-serif">!</text></svg></span>`:'';
+      const onclick=shift?`onclick="showShift('${name.replace(/'/g,"\\'")}','${dstr}','${shift}')"` :'';
+      col+=`<div style="${rowBg}${tint}width:${colW}px;height:30px;border-right:1px solid #2e4a6a;border-bottom:1px solid #2e4a6a;display:flex;align-items:center;justify-content:center;position:relative;box-sizing:border-box;overflow:hidden;${shift?'cursor:pointer;':''}" ${onclick}>${shift?(shift==='!!WARN!!'?warnBadge():badge(shift,name)):''}${noteDot}</div>`;
+    });
+    col+='</div>';
+    dayColsHtml+=col;
+  });
+
+  mc.innerHTML=`
+    <div style="border:1.5px solid ${rosterBorder};border-radius:11px;overflow:hidden;background:${wrapperBg};margin:0 1px;">
+      <div style="display:flex;">
+        <div style="width:80px;flex-shrink:0;z-index:10;position:relative;">${nameColHtml}</div>
+        <div id="week-scroll" style="overflow-x:scroll;overflow-y:hidden;flex:1;-webkit-overflow-scrolling:touch;scrollbar-width:none;cursor:grab;">
+          <div style="display:flex;width:${nDays*colW}px;">${dayColsHtml}</div>
+        </div>
+      </div>
+    </div>`;
+
+  // Hide scrollbar webkit
+  const style=document.getElementById('week-scroll-style')||document.createElement('style');
+  style.id='week-scroll-style';
+  style.textContent='#week-scroll::-webkit-scrollbar{display:none;}';
+  document.head.appendChild(style);
+
+  // Scroll to currentDate
+  const scrollEl=document.getElementById('week-scroll');
+  if(scrollEl){
+    const targetIdx=days.findIndex(d=>ds(d)===ds(currentDate));
+    if(targetIdx>=0) scrollEl.scrollLeft=Math.max(0,targetIdx*colW);
+
+    // Mouse drag to scroll (PC)
+    let mDown=false,mStartX=0,mScrollLeft=0;
+    scrollEl.addEventListener('mousedown',e=>{
+      mDown=true; mStartX=e.clientX; mScrollLeft=scrollEl.scrollLeft;
+      scrollEl.style.cursor='grabbing'; scrollEl.style.userSelect='none';
+      e.preventDefault();
+    });
+    window.addEventListener('mousemove',e=>{
+      if(!mDown) return;
+      const dx=e.clientX-mStartX;
+      scrollEl.scrollLeft=mScrollLeft-dx;
+    });
+    window.addEventListener('mouseup',()=>{
+      if(!mDown) return;
+      mDown=false;
+      scrollEl.style.cursor='grab'; scrollEl.style.userSelect='';
+    });
+
+    // Update header on scroll
+    let hRaf=null;
+    scrollEl.addEventListener('scroll',()=>{
+      if(hRaf) cancelAnimationFrame(hRaf);
+      hRaf=requestAnimationFrame(()=>{
+        const fi=Math.round(scrollEl.scrollLeft/colW);
+        const d0=days[Math.max(0,fi)];
+        const d6=days[Math.min(fi+6,days.length-1)];
+        if(!d0||!d6) return;
+        currentDate=new Date(d0);
+        const wk0=weekNum(d0),wk6=weekNum(d6);
+        const wkLabel=wk0===wk6?`Week <span style="color:#FEB900">${wk0}</span>`:`Week <span style="color:#FEB900">${wk0}–${wk6}</span>`;
+        const fmt=d=>`${d.getDate()} ${MONTHS_FULL[d.getMonth()].charAt(0).toUpperCase()+MONTHS_FULL[d.getMonth()].slice(1)}`;
+        document.getElementById('periodLabel').innerHTML=`<div style='color:#fff;font-size:15px;font-weight:400;font-family:Roboto,sans-serif;line-height:1.3;'>${wkLabel}</div><div style='color:#fff;font-size:26px;font-weight:500;line-height:1.2;font-family:Roboto,sans-serif;'>${fmt(d0)} – ${fmt(d6)}</div>`;
+        hRaf=null;
+      });
+    },{passive:true});
+  }
 }
 
 /* ===== PERSONAL ===== */
@@ -960,106 +1062,19 @@ function dpSelect(dstr){
   }
 }
 
-/* ===== SWIPE + DRAG-TO-SLIDE (week) ===== */
+/* ===== SWIPE (non-week views) ===== */
 (function(){
   const el=document.getElementById('mainContent');
-
-  // ── Non-week views: simple swipe ──
   let x0=null,t0=null;
-
-  // ── Week drag state ──
-  let dragActive=false,dragStartX=0,dragStartDate=null,lastDayOffset=0,rafId=null,isDragging=false;
-
-  function getColWidth(){
-    // Roster grid width = mainContent width - 80px name col, divided by 7
-    return Math.max(30, (el.offsetWidth - 80) / 7);
-  }
-
-  function weekDragStart(clientX){
-    if(currentView!=='week') return false;
-    dragActive=true;
-    isDragging=false;
-    dragStartX=clientX;
-    dragStartDate=new Date(currentDate.getTime());
-    lastDayOffset=0;
-    return true;
-  }
-
-  function weekDragMove(clientX){
-    if(!dragActive||currentView!=='week') return;
-    const dx=clientX-dragStartX;
-    if(!isDragging&&Math.abs(dx)>8) isDragging=true;
-    if(!isDragging) return;
-    const colW=getColWidth();
-    const dayOffset=Math.round(-dx/colW);
-    if(dayOffset===lastDayOffset) return;
-    lastDayOffset=dayOffset;
-    if(rafId) cancelAnimationFrame(rafId);
-    rafId=requestAnimationFrame(()=>{
-      currentDate=addDays(dragStartDate,dayOffset);
-      renderWeek();
-      rafId=null;
-    });
-  }
-
-  function weekDragEnd(){
-    if(!dragActive) return;
-    dragActive=false;
-    isDragging=false;
-    dragStartDate=null;
-  }
-
-  // Touch events
   el.addEventListener('touchstart',e=>{
-    if(currentView==='week'){
-      weekDragStart(e.touches[0].clientX);
-      x0=null; // disable simple swipe for week
-    } else {
-      x0=e.touches[0].clientX; t0=Date.now();
-    }
+    if(currentView!=='week'){x0=e.touches[0].clientX;t0=Date.now();}
   },{passive:true});
-
-  el.addEventListener('touchmove',e=>{
-    if(currentView==='week'&&dragActive&&isDragging){
-      e.preventDefault(); // block scroll when dragging horizontally
-      weekDragMove(e.touches[0].clientX);
-    }
-  },{passive:false});
-
   el.addEventListener('touchend',e=>{
-    if(currentView==='week'){
-      weekDragEnd();
-    } else {
-      if(x0===null) return;
-      const dx=e.changedTouches[0].clientX-x0,dt=Date.now()-t0;
-      if(Math.abs(dx)>50&&dt<400&&currentView==='team') navigate(dx<0?1:-1);
-      x0=null;
-    }
-  },{passive:true});
-
-  el.addEventListener('touchcancel',()=>{
-    weekDragEnd();
+    if(currentView==='week'||x0===null) return;
+    const dx=e.changedTouches[0].clientX-x0,dt=Date.now()-t0;
+    if(Math.abs(dx)>40&&dt<500&&currentView==='team') navigate(dx<0?1:-1);
     x0=null;
   },{passive:true});
-
-  // Mouse events (desktop testing)
-  el.addEventListener('mousedown',e=>{
-    if(currentView==='week') weekDragStart(e.clientX);
-    else { x0=e.clientX; t0=Date.now(); }
-  });
-  el.addEventListener('mousemove',e=>{
-    if(currentView==='week'&&dragActive) weekDragMove(e.clientX);
-  });
-  el.addEventListener('mouseup',e=>{
-    if(currentView==='week') weekDragEnd();
-    else {
-      if(x0===null) return;
-      const dx=e.clientX-x0,dt=Date.now()-t0;
-      if(Math.abs(dx)>50&&dt<400&&currentView==='team') navigate(dx<0?1:-1);
-      x0=null;
-    }
-  });
-  el.addEventListener('mouseleave',()=>{ weekDragEnd(); x0=null; });
 })();
 
 
