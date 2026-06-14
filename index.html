@@ -632,6 +632,7 @@ function toggleMode(){
   }
   if(currentView==='week') renderWeek();
   if(currentView==='personal') renderPersonal();
+  if(currentView==='team') renderTeam();
 }
 var _holdTimer=null,_holdFired=false;
 function _holdStart(e){_holdFired=false;_holdTimer=setTimeout(function(){_holdFired=true;if(currentView!=="personal")openDatePicker();},700);}
