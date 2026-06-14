@@ -1099,7 +1099,9 @@ function dpSelect(dstr){
     x0=null;
   },{passive:true});
 })();
+try{if(localStorage.getItem("hccc-mode")==="dark"){document.body.classList.add("dark");}}catch(e){}
 render();
+if(currentView==='team') renderTeam();
 initWarnings();
 (function(){
   const msToNextMinute = (60 - new Date().getSeconds()) * 1000 - new Date().getMilliseconds();
